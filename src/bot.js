@@ -16,12 +16,26 @@ client.on('ready', (c) => {
     console.log(`${c.user.tag} is online.`)
 });
 
-client.on('messageCreate', (message) => {
-    if (message.author.bot)
-        return;
+const COMMAND_PREFIX = '!';
+const { generateRandomWord } = require('./words');
 
-    if (message.content === 'hello')
-        message.reply('Hello');
+client.on('messageCreate', (message) => {
+    let args = message.content.substring(COMMAND_PREFIX.length).split(" ");
+
+
+    switch(args[0]) {
+        case 'help':
+            const helpEmbed = {
+                color: 0x0099ff,
+                title: 'Guess the word!',
+                description: 'Type `!start` to begin the game. A new word will be randomized and you can start guessing by hinting a letter with command `!letter [letter]`, or eventually guessing the word typing `!guess [word]`.',
+                footer: {
+                    text: 'Enjoy the game!',
+                },
+            };
+            message.reply({ embeds: [helpEmbed] });
+            break;
+    }
 });
 
 client.login(token)
