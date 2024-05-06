@@ -27,6 +27,17 @@ client.on('messageCreate', (message) => {
 
     switch(args[0]) {
         case 'help':
+            if (args[1]) {
+                const invalidMessage = {
+                    color: 0xFF0000,
+                    title: 'Invalid command',
+                    description: 'The bot could not recognize your request, if you having trouble type `!help` for full details'
+                };
+
+                message.reply({ embeds: [invalidMessage] });
+                break;
+            }
+
             const helpEmbed = {
                 color: 0x0099ff,
                 title: 'Guess the word!',
@@ -39,6 +50,17 @@ client.on('messageCreate', (message) => {
             break;
 
         case 'start':
+            if (args[1]) {
+                const invalidMessage = {
+                    color: 0xFF0000,
+                    title: 'Invalid command',
+                    description: 'The bot could not recognize your request, if you having trouble type `!help` for full details'
+                };
+
+                message.reply({ embeds: [invalidMessage] });
+                break;
+            }
+
             if (!games[message.channel.id]) {
                 const word = generateRandomWord();
 
@@ -53,13 +75,13 @@ client.on('messageCreate', (message) => {
                 message.channel.send(word)
 
             } else {
-                const messageEmbed = {
+                const onGoingMessage = {
                     color: 0xFF0000,
                     title: 'Could not start the game!',
                     description: 'Unfortunately there is a game ongoing, to start a new game you have to finish this one first. You could also surrender or cancel the game using command `!stop`'
                 };
 
-                message.reply({ embeds: [messageEmbed] });
+                message.reply({ embeds: [onGoingMessage] });
             }
             break;
     }
