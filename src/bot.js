@@ -18,6 +18,7 @@ client.on('ready', (c) => {
 
 const COMMAND_PREFIX = '!';
 const { generateRandomWord } = require('./words');
+const { embedMessage } = require('./embedMessage');
 
 const games = {};
 
@@ -28,34 +29,20 @@ client.on('messageCreate', (message) => {
     switch(args[0]) {
         case 'help':
             if (args[1]) {
-                const invalidMessage = {
-                    color: 0xFF0000,
-                    title: 'Invalid command',
-                    description: 'The bot could not recognize your request, if you having trouble type `!help` for full details'
-                };
+                const invalidMessage = embedMessage(0xFF0000, 'Invalid command', 'The bot could not recognize your request, if you having trouble type `!help` for full details', '');
 
                 message.reply({ embeds: [invalidMessage] });
                 break;
             }
+            
+            const helpMessage = embedMessage(0x0099FF, 'Guess the word!', 'Type `!start` to begin the game. A new word will be randomized and you can start guessing by hinting a letter with command `!letter [letter]`, or eventually guessing the word typing `!guess [word]`\n\nUse `!stop` to stop an ongoing game or surrender.', '');
 
-            const helpEmbed = {
-                color: 0x0099ff,
-                title: 'Guess the word!',
-                description: 'Type `!start` to begin the game. A new word will be randomized and you can start guessing by hinting a letter with command `!letter [letter]`, or eventually guessing the word typing `!guess [word]`\n\nUse `!stop` to stop an ongoing game or surrender.',
-                footer: {
-                    text: 'Enjoy the game!',
-                },
-            };
-            message.reply({ embeds: [helpEmbed] });
+            message.reply({ embeds: [helpMessage] });
             break;
 
         case 'start':
             if (args[1]) {
-                const invalidMessage = {
-                    color: 0xFF0000,
-                    title: 'Invalid command',
-                    description: 'The bot could not recognize your request, if you having trouble type `!help` for full details'
-                };
+                const invalidMessage = embedMessage(0xFF0000, 'Invalid command', 'The bot could not recognize your request, if you having trouble type `!help` for full details');
 
                 message.reply({ embeds: [invalidMessage] });
                 break;
@@ -75,12 +62,7 @@ client.on('messageCreate', (message) => {
                 message.channel.send(word)
 
             } else {
-                const onGoingMessage = {
-                    color: 0xFF0000,
-                    title: 'Could not start the game!',
-                    description: 'Unfortunately there is a game ongoing, to start a new game you have to finish this one first. You could also surrender or cancel the game using command `!stop`'
-                };
-
+                const onGoingMessage = embedMessage(0xFF0000, 'Could not start the game!', 'Unfortunately there is a game ongoing, to start a new game you have to finish this one first. You could also surrender or cancel the game using command `!stop`');
                 message.reply({ embeds: [onGoingMessage] });
             }
             break;
