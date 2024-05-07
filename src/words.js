@@ -13,8 +13,15 @@ const categories = {
 
 function generateRandomWord() {
     const keys = Object.keys(categories);
-    const randomCategory = categories[keys[Math.floor(Math.random() * keys.length)]];
-    return randomCategory[Math.floor(Math.random() * randomCategory.length)];
+    const randomCategory = keys[Math.floor(Math.random() * keys.length)];
+    const word = categories[randomCategory][Math.floor(Math.random() * categories[randomCategory].length)];
+
+    return { category: randomCategory, word: word };
 }
 
-module.exports = { generateRandomWord };
+function numOfGuesses(word) {
+    //50% percentage | (i.e.) 4 letters -> 2 guesses | 3 letters 2 guesses (roundUp)
+    return Math.ceil(word.length / 2);
+}
+
+module.exports = { generateRandomWord, numOfGuesses };

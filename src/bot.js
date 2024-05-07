@@ -17,7 +17,7 @@ client.on('ready', (c) => {
 });
 
 const COMMAND_PREFIX = '!';
-const { generateRandomWord } = require('./words');
+const { generateRandomWord, numOfGuesses } = require('./words');
 const { embedMessage } = require('./embedMessage');
 
 const games = {};
@@ -49,12 +49,13 @@ client.on('messageCreate', (message) => {
             }
 
             if (!games[message.channel.id]) {
-                const word = generateRandomWord();
+                const { category, word } = generateRandomWord();
 
                 games[message.channel.id] = {
+                    category: category,
                     word: word,
-                    guesses: [],
-                    triesLeft: 6 //to be adjusted
+                    guesses: [], 
+                    triesLeft: numOfGuesses(word)
                 }
 
                 //To be removed
