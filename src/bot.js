@@ -66,6 +66,20 @@ client.on('messageCreate', (message) => {
                 message.reply({ embeds: [onGoingMessage] });
             }
             break;
+
+        case 'stop':
+            if (args[1]) {
+                const invalidMessage = embedMessage(0xFF0000, 'Invalid command', 'The bot could not recognize your request, if you having trouble type `!help` for full details');
+
+                message.reply({ embeds: [invalidMessage] });
+                break;
+            }
+
+            delete games[message.channel.id];
+
+            const stopMessage = embedMessage(0xFFFF00, 'Game over', 'You decided to cancel an ongoing game, now you can start a new one using command `!start`')
+            message.reply({ embeds: [stopMessage] });
+            break;
     }
 });
 
