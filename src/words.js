@@ -4,7 +4,7 @@ const categories = {
     Colors: ["red", "blue", "green", "yellow", "orange", "purple", "pink", "black", "white", "brown"],
     Animals: ["lion", "elephant", "tiger", "giraffe", "monkey", "zebra", "panda", "koala", "dog", "cat"],
     Countries: ["United States", "China", "India", "Brazil", "Russia", "Canada", "Australia", "Argentina", "France", "Germany", "United Kingdom", "Japan", "South Korea", "Italy", "Mexico", "Indonesia", "South Africa", "Turkey", "Spain", "Netherlands"],
-    Football_Clubs: ["Real Madrid", "Barcelona", "Manchester United", "Bayern Munich", "Liverpool", "Juventus", "Chelsea", "Paris Saint-Germain", "Manchester City", "Arsenal", "Tottenham Hotspur", "AC Milan", "Inter Milan", "Borussia Dortmund", "Atletico Madrid", "Ajax", "FC Porto", "AS Roma", "Napoli", "Benfica"],
+    Football_Clubs: ["Real Madrid", "Barcelona", "Manchester United", "Bayern Munich", "Liverpool", "Juventus", "Chelsea", "Paris Saint Germain", "Manchester City", "Arsenal", "Tottenham Hotspur", "AC Milan", "Inter Milan", "Borussia Dortmund", "Atletico Madrid", "Ajax", "FC Porto", "AS Roma", "Napoli", "Benfica"],
     Vehicles: ["car", "bus", "bicycle", "train", "motorcycle", "truck", "airplane", "boat", "helicopter", "scooter"],
     Planets: ["Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "Moon"],
     Professions: ["doctor", "teacher", "engineer", "lawyer", "chef", "artist", "scientist", "firefighter", "police officer", "architect"],
@@ -21,14 +21,17 @@ function generateRandomWord() {
 
 function numOfGuesses(word) {
     //50% percentage | (i.e.) 4 letters -> 2 guesses | 3 letters 2 guesses (roundUp)
-    return Math.ceil(word.length / 2);
+    return Math.ceil(word.split(' ').join('').length / 2);
 }
 
 function spacesFormatter(word) {
     let spaces = ''
 
     for (let i = 0; i < word.length; i++) {
-        spaces += '\\_\u0020';
+        if (word.charAt(i) === ' ')
+            spaces += '\u1CBC\u1CBC';
+        else
+            spaces += '\\_\u0020';
     }
 
     return spaces
@@ -45,6 +48,8 @@ function guessReplaceFormatter(word, guesses) {
     for (let i = 0; i < word.length; i++) {
         if (correctGuesses.some(guess => guess === word.charAt(i).toUpperCase()))
             encodedWord += (word.charAt(i).toUpperCase() + '\u0020')
+        else if (word.charAt(i) === ' ')
+            encodedWord += '\u1CBC\u1CBC';
         else
             encodedWord += '\\_\u0020';
     }
