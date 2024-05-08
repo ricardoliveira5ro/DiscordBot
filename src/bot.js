@@ -65,7 +65,7 @@ client.on('messageCreate', (message) => {
                     'Game on!', 
                     `Category: ${category}\n` +
                     `Number of guesses left: ${games[message.channel.id].triesLeft}\n \n` +
-                    `${encodedWord}`,
+                    encodedWord,
                     'Any guesses?'
                 )
                 message.reply({ embeds: [startMessage] });
