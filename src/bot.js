@@ -136,13 +136,14 @@ client.on('messageCreate', (message) => {
 
             const color = match ? 0x00FF00 : 0xFF0000
             const title = match ? 'Nice guess!' : 'Wrong guess!'
+            const warningSign = (games[message.channel.id].triesLeft === 1) ? ':warning:' : ''
             const encodedWord = guessReplaceFormatter(games[message.channel.id].word, games[message.channel.id].guesses)
 
             const letterGuessMessage = embedMessage(
                 color, 
                 title, 
                 `Category: ${games[message.channel.id].category}\n` +
-                `Number of guesses left: ${games[message.channel.id].triesLeft}\n \n` +
+                `Number of guesses left: ${games[message.channel.id].triesLeft} ${warningSign}\n \n` +
                 `${encodedWord}` +
                 `\n \n:no_entry: Guesses: ${games[message.channel.id].guesses.filter(guess => !guess.isCorrect).map(guess => guess.letter).join(', ')}`,
             )
