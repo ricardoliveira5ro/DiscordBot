@@ -24,4 +24,14 @@ function numOfGuesses(word) {
     return Math.ceil(word.length / 2);
 }
 
-module.exports = { generateRandomWord, numOfGuesses };
+function spacesFormatter(word) {
+    let spaces = ''
+
+    for (let i = 0; i < word.length; i++) {
+        spaces += '\\_\u0020';
+    }
+
+    return spaces
+}
+
+module.exports = { generateRandomWord, numOfGuesses, spacesFormatter };

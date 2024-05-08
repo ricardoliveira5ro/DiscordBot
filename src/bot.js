@@ -17,7 +17,7 @@ client.on('ready', (c) => {
 });
 
 const COMMAND_PREFIX = '!';
-const { generateRandomWord, numOfGuesses } = require('./words');
+const { generateRandomWord, numOfGuesses, spacesFormatter } = require('./words');
 const { embedMessage } = require('./embedMessage');
 
 const games = {};
@@ -58,9 +58,17 @@ client.on('messageCreate', (message) => {
                     triesLeft: numOfGuesses(word)
                 }
 
-                //To be removed
-                console.log('the game started')
-                message.channel.send(word)
+                const encodedWord = spacesFormatter(games[message.channel.id].word)
+
+                const startMessage = embedMessage(
+                    0x0099FF, 
+                    'Game on!', 
+                    `Category: ${category}\n` +
+                    `Number of guesses left: ${games[message.channel.id].triesLeft}\n \n` +
+                    `${encodedWord}`,
+                    'Any guesses?'
+                )
+                message.reply({ embeds: [startMessage] });
 
             } else {
                 const onGoingMessage = embedMessage(0xFF0000, 'Could not start the game!', 'Unfortunately there is a game ongoing, to start a new game you have to finish this one first. You could also surrender or cancel the game using command `!stop`');
