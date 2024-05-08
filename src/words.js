@@ -34,4 +34,22 @@ function spacesFormatter(word) {
     return spaces
 }
 
-module.exports = { generateRandomWord, numOfGuesses, spacesFormatter };
+function matchLetter(word, letter) {
+    return word.toUpperCase().includes(letter.toUpperCase());
+}
+
+function guessReplaceFormatter(word, guesses) {
+    let encodedWord = '';
+    const correctGuesses = guesses.filter((guess) => guess.isCorrect).map(guess => guess.letter.toUpperCase());
+
+    for (let i = 0; i < word.length; i++) {
+        if (correctGuesses.some(guess => guess === word.charAt(i).toUpperCase()))
+            encodedWord += (word.charAt(i).toUpperCase() + '\u0020')
+        else
+            encodedWord += '\\_\u0020';
+    }
+
+    return encodedWord
+}
+
+module.exports = { generateRandomWord, numOfGuesses, spacesFormatter, matchLetter, guessReplaceFormatter };

@@ -17,7 +17,7 @@ client.on('ready', (c) => {
 });
 
 const COMMAND_PREFIX = '!';
-const { generateRandomWord, numOfGuesses, spacesFormatter } = require('./words');
+const { generateRandomWord, numOfGuesses, spacesFormatter, matchLetter, guessReplaceFormatter } = require('./words');
 const { embedMessage } = require('./embedMessage');
 
 const games = {};
@@ -89,6 +89,67 @@ client.on('messageCreate', (message) => {
             const stopMessage = embedMessage(0xFFFF00, 'Game over', 'You decided to cancel an ongoing game, now you can start a new one using command `!start`')
             message.reply({ embeds: [stopMessage] });
             break;
+
+        case 'letter':
+            if (!args[1]) {
+                const noLetterMessage = embedMessage(0xFF0000, 'No letter guess', 'The bot could not recognize your letter guess, try input i.e. `!letter A`');
+
+                message.reply({ embeds: [noLetterMessage] });
+                break;
+            }
+
+            if (args[2]) {
+                const tooManyGuessesMessage = embedMessage(0xFF0000, 'Too many guesses', 'The bot could not process your guess, try input just 1 guess per command');
+
+                message.reply({ embeds: [tooManyGuessesMessage] });
+                break;
+            }
+
+            if (args[1].length > 1) {
+                const wordInLetterGuessMessage = embedMessage(0xFF0000, 'Too many letters', 'The bot could not process your guess. This command only allows 1 letter, if you want to guess the word type `!guess [word]`');
+
+                message.reply({ embeds: [wordInLetterGuessMessage] });
+                break;
+            }
+
+            const match = matchLetter(games[message.channel.id].word, args[1]);
+
+            //Avoid repeatable guesses
+            if (!games[message.channel.id].guesses.some(guess => guess.letter === args[1].toUpperCase())) {
+                games[message.channel.id].guesses.push({ isCorrect: match, letter: args[1].toUpperCase()})
+                games[message.channel.id].triesLeft--
+            }
+
+            if (games[message.channel.id].triesLeft === 0) {
+                const gameOverMessage = embedMessage(
+                    0xFF0000, 
+                    'Game Over!', 
+                    `You ran out of guesses :cry:\nCategory: ${games[message.channel.id].category}\nThe word was:\n \n` +
+                    `${games[message.channel.id].word.toUpperCase().split('').join(' ')}`
+                );
+
+                delete games[message.channel.id];
+    
+                message.reply({ embeds: [gameOverMessage] });
+                break;
+            }
+
+            const color = match ? 0x00FF00 : 0xFF0000
+            const title = match ? 'Nice guess!' : 'Wrong guess!'
+            const encodedWord = guessReplaceFormatter(games[message.channel.id].word, games[message.channel.id].guesses)
+
+            const letterGuessMessage = embedMessage(
+                color, 
+                title, 
+                `Category: ${games[message.channel.id].category}\n` +
+                `Number of guesses left: ${games[message.channel.id].triesLeft}\n \n` +
+                `${encodedWord}` +
+                `\n \n:no_entry: Guesses: ${games[message.channel.id].guesses.filter(guess => !guess.isCorrect).map(guess => guess.letter).join(', ')}`,
+            )
+
+            message.reply({ embeds: [letterGuessMessage] });
+            break;
+
     }
 });
 
