@@ -86,11 +86,18 @@ client.on('messageCreate', (message) => {
 
             delete games[message.channel.id];
 
-            const stopMessage = embedMessage(0xFFFF00, 'Game over', 'You decided to cancel an ongoing game, now you can start a new one using command `!start`')
+            const stopMessage = embedMessage(0xFFFF00, 'Game canceled', 'You decided to cancel an ongoing game, now you can start a new one using command `!start`')
             message.reply({ embeds: [stopMessage] });
             break;
 
         case 'letter':
+            if(!games[message.channel.id]) {
+                const noGameStartedMessage = embedMessage(0xFF0000, 'No game started', 'Before start guessing type `!start` to start the game');
+
+                message.reply({ embeds: [noGameStartedMessage] });
+                break;
+            }
+
             if (!args[1]) {
                 const noLetterMessage = embedMessage(0xFF0000, 'No letter guess', 'The bot could not recognize your letter guess, try input i.e. `!letter A`');
 
@@ -134,16 +141,16 @@ client.on('messageCreate', (message) => {
                 break;
             }
 
-            const color = match ? 0x00FF00 : 0xFF0000
-            const title = match ? 'Nice guess!' : 'Wrong guess!'
-            const warningSign = (games[message.channel.id].triesLeft === 1) ? ':warning:' : ''
+            const colorLetter = match ? 0x00FF00 : 0xFF0000
+            const titleLetter = match ? 'Nice guess!' : 'Wrong guess!'
+            const warningSignLetter = (games[message.channel.id].triesLeft === 1) ? ':warning:' : ''
             const encodedWord = guessReplaceFormatter(games[message.channel.id].word, games[message.channel.id].guesses)
 
             const letterGuessMessage = embedMessage(
-                color, 
-                title, 
+                colorLetter, 
+                titleLetter, 
                 `Category: ${games[message.channel.id].category}\n` +
-                `Number of guesses left: ${games[message.channel.id].triesLeft} ${warningSign}\n \n` +
+                `Number of guesses left: ${games[message.channel.id].triesLeft} ${warningSignLetter}\n \n` +
                 `${encodedWord}` +
                 `\n \n:no_entry: Guesses: ${games[message.channel.id].guesses.filter(guess => !guess.isCorrect).map(guess => guess.letter).join(', ')}`,
             )
@@ -151,6 +158,62 @@ client.on('messageCreate', (message) => {
             message.reply({ embeds: [letterGuessMessage] });
             break;
 
+        case 'guess':
+            if(!games[message.channel.id]) {
+                const noGameStartedMessage = embedMessage(0xFF0000, 'No game started', 'Before start guessing type `!start` to start the game');
+
+                message.reply({ embeds: [noGameStartedMessage] });
+                break;
+            }
+
+            if (!args[1]) {
+                const noGuessMessage = embedMessage(0xFF0000, 'No guess inputted', 'The bot could not recognize your guess, try input i.e. `!guess car`');
+
+                message.reply({ embeds: [noGuessMessage] });
+                break;
+            }
+
+            if (!games[message.channel.id].guesses.some(guess => guess.letter === args.slice(1).join(" ").toUpperCase())) {
+                games[message.channel.id].guesses.push({ isCorrect: matchLetter, letter: args.slice(1).join(" ").toUpperCase()})
+                games[message.channel.id].triesLeft--
+            }
+            
+            const matchGuess = games[message.channel.id].word.toUpperCase() === args.slice(1).join(" ").toUpperCase()
+
+            if (!matchGuess && games[message.channel.id].triesLeft === 0) {
+                const gameOverMessage = embedMessage(
+                    0xFF0000, 
+                    'Game Over!', 
+                    `You ran out of guesses :cry:\nCategory: ${games[message.channel.id].category}\nThe word was:\n \n` +
+                    `${games[message.channel.id].word.toUpperCase().split('').map(char => char === ' ' ? '\u1CBC' : char).join(' ')}`   
+                );
+
+                delete games[message.channel.id];
+    
+                message.reply({ embeds: [gameOverMessage] });
+                break;
+            }
+
+            const colorGuess = matchGuess ? 0x00FF00 : 0xFF0000
+            const titleGuess = matchGuess ? 'You won!' : 'Wrong guess!'
+            const guessEncodedMessage = matchGuess ? `${games[message.channel.id].word.toUpperCase().split('').map(char => char === ' ' ? '\u1CBC' : char).join(' ')}`
+                                                    : guessReplaceFormatter(games[message.channel.id].word, games[message.channel.id].guesses)
+            const warningSignGuess = (games[message.channel.id].triesLeft === 1) ? ':warning:' : ''
+
+            const guessMessage = embedMessage(
+                colorGuess, 
+                titleGuess, 
+                `Category: ${games[message.channel.id].category}\n` +
+                `Number of guesses left: ${games[message.channel.id].triesLeft} ${warningSignGuess}\n \n` +
+                `${guessEncodedMessage}` +
+                `\n \n:no_entry: Guesses: ${games[message.channel.id].guesses.filter(guess => !guess.isCorrect).map(guess => guess.letter).join(', ')}`,
+            )
+
+            if (matchGuess)
+                delete games[message.channel.id];
+
+            message.reply({ embeds: [guessMessage] });
+            break;
     }
 });
 
