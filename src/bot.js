@@ -173,12 +173,19 @@ client.on('messageCreate', (message) => {
                 break;
             }
 
-            if (!games[message.channel.id].guesses.some(guess => guess.letter === args.slice(1).join(" ").toUpperCase())) {
-                games[message.channel.id].guesses.push({ isCorrect: matchLetter, letter: args.slice(1).join(" ").toUpperCase()})
+            if (args[1].length <= 1) {
+                const letterInGuessMessage = embedMessage(0xFF0000, 'Invalid command', 'The bot was expecting complete words and not a letter, for guessing a letter type `!letter [letter]`');
+
+                message.reply({ embeds: [letterInGuessMessage] });
+                break;
+            }
+
+            const matchGuess = games[message.channel.id].word.toUpperCase() === args.slice(1).join(" ").toUpperCase()
+
+            if (!games[message.channel.id].guesses.some(guess => guess.letter === args.slice(1).join(" ").toUpperCase())) {            
+                games[message.channel.id].guesses.push({ isCorrect: matchGuess, letter: args.slice(1).join(" ").toUpperCase()})
                 games[message.channel.id].triesLeft--
             }
-            
-            const matchGuess = games[message.channel.id].word.toUpperCase() === args.slice(1).join(" ").toUpperCase()
 
             if (!matchGuess && games[message.channel.id].triesLeft === 0) {
                 const gameOverMessage = embedMessage(
