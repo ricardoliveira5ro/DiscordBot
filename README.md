@@ -13,3 +13,17 @@ This Discord bot allows users to play a word guessing game within their Discord 
 * Node.js
 * Discord.js
 * dotenv
+
+### Setup
+1. Go to [Discord Developer Portal](https://discord.com/developers/applications) and create a new application.
+2. In Bot tab enable "Privileged Gateway Intents"
+3. If you don't have or remember your discord "token", in Bot tab you can reset your token (You will need this token)
+4. In OAuth2 tab select "bot" for the scope and "Administrator" permission bellow,
+5. Copy the generated URL at the bottom at paste it into your browser (This URL is the invite for the bot for any server you want)
+
+### Run
+1. Clone the repository to your machine
+2. Run `npm install` to install all the dependencies and packages
+3. Create a .env file and add your Discord bot token `token=[token]`. (Add your .env file to your .gitignore file, if you are commiting any code)
+4. Run `npm install -g nodemon` to be able to run your bot locally
+5. Finally start a new game in Discord and enjoy!
