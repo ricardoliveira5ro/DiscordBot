@@ -27,7 +27,7 @@ for (const file of commandFiles) {
 }
 
 const COMMAND_PREFIX = '!';
-const games = {};
+let games = {};
 
 client.on('messageCreate', (message) => {
     if (!message.content.startsWith(COMMAND_PREFIX) || message.author.bot) return;
@@ -39,7 +39,7 @@ client.on('messageCreate', (message) => {
     if (!command) return;
 
     try {
-        games[message.channel.id] = command.execute(message, args, games[message.channel.id]) || games[message.channel.id];
+        games = command.execute(message, args, games) || games;
     } catch (error) {
         console.error(error);
         message.reply("There was an error trying to execute that command!");

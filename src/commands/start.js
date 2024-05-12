@@ -4,13 +4,13 @@ const { numOfGuesses, spacesFormatter } = require("../utils/functions");
 
 module.exports = {
     name: "start",
-    execute(message, args, game) {
+    execute(message, args, games) {
         if(args[0]) { 
             message.reply({ embeds: [tooManyArgumentsMessage] });
             return; 
         }
 
-        if (game) {
+        if (games[message.channel.id]) {
             message.reply({ embeds: [onGoingGameMessage] });
             return;
         }
@@ -19,7 +19,7 @@ module.exports = {
         const { category, word } = generateRandomWord();
         const encodedWord = spacesFormatter(word);
 
-        game = {
+        games[message.channel.id] = {
             category: category,
             word: word,
             guesses: [], 
@@ -30,12 +30,12 @@ module.exports = {
             0x0099FF, 
             'Game on!', 
             `Category: ${category}\n` +
-            `Number of guesses left: ${game.triesLeft}\n \n` +
+            `Number of guesses left: ${games[message.channel.id].triesLeft}\n \n` +
             encodedWord,
             'Any guesses?'
         )
 
         message.reply({ embeds: [startMessage] });
-        return game;
+        return games;
     },
 };
