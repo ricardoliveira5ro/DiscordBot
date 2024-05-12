@@ -16,4 +16,20 @@ function spacesFormatter(word) {
     return spaces;
 }
 
-module.exports = { numOfGuesses, spacesFormatter };
+function guessReplaceFormatter(word, guesses) {
+    let encodedWord = '';
+    const correctGuesses = guesses.filter((guess) => guess.isCorrect).map(guess => guess.letter.toUpperCase());
+
+    for (let i = 0; i < word.length; i++) {
+        if (correctGuesses.some(guess => guess === word.charAt(i).toUpperCase()))
+            encodedWord += (word.charAt(i).toUpperCase() + '\u0020')
+        else if (word.charAt(i) === ' ')
+            encodedWord += '\u1CBC\u1CBC';
+        else
+            encodedWord += '\\_\u0020';
+    }
+
+    return encodedWord
+}
+
+module.exports = { numOfGuesses, spacesFormatter, guessReplaceFormatter };
