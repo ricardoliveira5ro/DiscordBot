@@ -32,4 +32,8 @@ function guessReplaceFormatter(word, guesses) {
     return encodedWord
 }
 
-module.exports = { numOfGuesses, spacesFormatter, guessReplaceFormatter };
+function matchLetter(word, letter) {
+    return word.toUpperCase().includes(letter.toUpperCase());
+}
+
+module.exports = { numOfGuesses, spacesFormatter, guessReplaceFormatter, matchLetter };
