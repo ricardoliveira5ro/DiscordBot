@@ -46,4 +46,36 @@ client.on('messageCreate', (message) => {
     }
 });
 
+// --------------- Slash Commands development (Not ready) ----------------------
+const slashCommands = require('./slashCommands');
+client.once('ready', async () => {
+    try {
+        for (const command of slashCommands) {
+            await client.application.commands.create(command, process.env.guild_id);
+        }
+        console.log('Slash commands registered!');
+    } catch (error) {
+        console.error('Error registering slash commands:', error);
+    }
+});
+
+client.on('interactionCreate', async (interaction) => {
+    if (!interaction.isCommand()) return;
+
+    const { commandName, options } = interaction;
+
+    try {
+        if (commandName === 'primeiro') {
+            const startCommand = require('./commands/primeiro');
+            await startCommand.execute(interaction);
+        } else if (commandName === 'segundo') {
+            const guessCommand = require('./commands/segundo');
+            await guessCommand.execute(interaction);
+        }
+    } catch (error) {
+        console.error('Error handling interaction:', error);
+        await interaction.reply('There was an error handling your interaction.');
+    }
+});
+
 client.login(process.env.token);
