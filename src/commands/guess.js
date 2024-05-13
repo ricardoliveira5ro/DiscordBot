@@ -3,7 +3,7 @@ const { botMessage, noGameStartedMessage, noGuessMessage, letterInGuessMessage, 
 
 module.exports = {
     name: "guess",
-    execute(message, args, games) {
+    async execute(message, args, games) {
         if(!games[message.channel.id]) {
             message.reply({ embeds: [noGameStartedMessage] });
             return; 

@@ -4,7 +4,7 @@ const { numOfGuesses, spacesFormatter } = require("../utils/functions");
 
 module.exports = {
     name: "start",
-    execute(message, args, games) {
+    async execute(message, args, games) {
         if(args[0]) { 
             message.reply({ embeds: [tooManyArgumentsMessage] });
             return; 

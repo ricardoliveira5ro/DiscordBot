@@ -2,7 +2,7 @@ const { botMessage, tooManyArgumentsMessage } = require("../utils/messageHandler
 
 module.exports = {
     name: "stop",
-    execute(message, args, games) {
+    async execute(message, args, games) {
         if(args[0]) { 
             message.reply({ embeds: [tooManyArgumentsMessage] });
             return; 
