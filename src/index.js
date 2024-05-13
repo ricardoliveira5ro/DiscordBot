@@ -29,7 +29,7 @@ for (const file of commandFiles) {
 const COMMAND_PREFIX = '!';
 let games = {};
 
-client.on('messageCreate', (message) => {
+client.on('messageCreate', async (message) => {
     if (!message.content.startsWith(COMMAND_PREFIX) || message.author.bot) return;
 
     const args = message.content.slice(COMMAND_PREFIX.length).split(/ +/);
@@ -39,18 +39,19 @@ client.on('messageCreate', (message) => {
     if (!command) return;
 
     try {
-        games = command.execute(message, args, games) || games;
+        games = await command.execute(message, args, games) || games;
     } catch (error) {
         console.error(error);
         message.reply("There was an error trying to execute that command!");
     }
 });
 
-// --------------- Slash Commands development (Not ready) ----------------------
-const slashCommands = require('./slashCommands');
+// --------------- Slash Commands development ----------------------
+const slashCommands = require('./config/slashCommands');
 client.once('ready', async () => {
     try {
-        for (const command of slashCommands) {
+        const commandArray = Object.values(slashCommands);
+        for (const command of commandArray) {
             await client.application.commands.create(command, process.env.guild_id);
         }
         console.log('Slash commands registered!');
@@ -65,13 +66,9 @@ client.on('interactionCreate', async (interaction) => {
     const { commandName, options } = interaction;
 
     try {
-        if (commandName === 'primeiro') {
-            const startCommand = require('./commands/primeiro');
-            await startCommand.execute(interaction);
-        } else if (commandName === 'segundo') {
-            const guessCommand = require('./commands/segundo');
-            await guessCommand.execute(interaction);
-        }
+        const command = client.commands.get(commandName);
+        const args = options.data.map(option => option.value);;
+        games = await command.execute(interaction, args, games) || games
     } catch (error) {
         console.error('Error handling interaction:', error);
         await interaction.reply('There was an error handling your interaction.');
