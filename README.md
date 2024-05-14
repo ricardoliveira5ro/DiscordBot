@@ -14,6 +14,7 @@ This Discord bot allows users to play a word guessing game within their Discord 
 * Discord.js
 * @discordjs/rest
 * discord-api-types
+* jest
 * dotenv
 
 ### Setup
